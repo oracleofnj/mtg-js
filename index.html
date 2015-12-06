@@ -8,6 +8,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
 </head>
 
 <body>
@@ -29,7 +31,7 @@
                     <label for="loan_term">Loan Term</label>
                     <div class="input-group">
                         <input type="number" value="30" min="0" class="form-control" id="loan_term" />
-                        <span class="input-group-addon">years</span>
+                        <span class="input-group-addon">yrs</span>
                     </div>
                 </div>
                 <div class="form-row">
@@ -37,6 +39,15 @@
                     <div class="input-group">
                         <input type="number" value="3.875" min="0" step="0.125" class="form-control" id="interest_rate" />
                         <span class="input-group-addon">%</span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label for="closing_date">Closing Date</label>
+                    <div class="input-group date" data-provide="datepicker">
+                        <input type="text" class="form-control" id="closing_date" value="01/01/2016">
+                        <span class="input-group-addon">
+                            <i class="glyphicon glyphicon-th"></i>
+                        </span>
                     </div>
                 </div>
             </div>
