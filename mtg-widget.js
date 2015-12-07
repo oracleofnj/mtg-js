@@ -6,28 +6,43 @@ function updatePayment() {
     var baseMoment = moment($('#closing-date').val(), 'DD-MMM-YYYY');
     var extraPayments = [];
     for (var i=0; i < nPeriods; i++) {
-        extraPayments[i] = 0;
+        extraPayment = $('#extra-payment-' + (i+1).toString()).html();
+        if (undefined !== extraPayment && !isNaN(parseFloat(extraPayment.replace('$','')))) {
+            extraPayments[i] = parseFloat(extraPayment.replace('$',''));
+        } else {
+            extraPayments[i] = 0;
+        }
     }
 
     amSched = finance.amortizationSchedule(interestRate, nPeriods, loanAmount, baseMoment, extraPayments);
     var s = '<tr><td>0</td><td>' + baseMoment.format('DD-MMM-YYYY') + '</td><td colspan=6></td><td>$' + loanAmount.toFixed(2) + '</td></tr>';
     $('#monthly-payment').html('$' + payment.toFixed(2));
     for (i = 0; i < nPeriods; i++) {
-        s = s + '<tr><td>' +
-                amSched[i].period + '</td><td>' +
-                amSched[i].paymentDate.format('DD-MMM-YYYY') + '</td><td>' +
-                (amSched[i].interestRate * 100).toFixed(3) + '%</td><td>' +
-                '$' + amSched[i].interest.toFixed(2) + '</td><td>' +
-                '$' + amSched[i].principal.toFixed(2) + '</td><td>' +
-                '$' + amSched[i].requiredPayment.toFixed(2) + '</td><td>' +
-                '$' + extraPayments[i].toFixed(2) + '</td><td>' +
-                '$' + amSched[i].totalPayment.toFixed(2) + '</td><td>' +
-                '$' + amSched[i].endingBalance.toFixed(2) + '</td></tr>';
+        s = s + '<tr>' +
+                '<td>' + amSched[i].period + '</td>' +
+                '<td>' + amSched[i].paymentDate.format('DD-MMM-YYYY') + '</td>' +
+                '<td>' + (amSched[i].interestRate * 100).toFixed(3) + '%</td>' +
+                '<td>$' + amSched[i].interest.toFixed(2) + '</td>' +
+                '<td>$' + amSched[i].principal.toFixed(2) + '</td>' +
+                '<td>$' + amSched[i].requiredPayment.toFixed(2) + '</td>' +
+                '<td class="extra-payment" id="extra-payment-' + (i+1).toString() + '">$' + extraPayments[i].toFixed(2) + '</td>' +
+                '<td>$' + amSched[i].totalPayment.toFixed(2) + '</td>' +
+                '<td>$' + amSched[i].endingBalance.toFixed(2) + '</td></tr>';
     }
     $('#amortization-schedule').html(s);
+    $('.extra-payment').editable({
+        type: 'text',
+        success: function() {setTimeout(updatePayment, 5);},
+        validate: function(v) {
+            if (isNaN(parseFloat(v.replace('$', '')))) {
+                return 'Please enter a number';
+            }
+        }
+    });
 }
 
 $(document).ready(function() {
-    $('#loan-option-form').find("input").change(updatePayment);
+    $.fn.editable.defaults.mode = 'inline';
+    $('#loan-option-form').find('input').change(updatePayment);
     updatePayment();
 });
