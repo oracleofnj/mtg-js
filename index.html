@@ -10,6 +10,8 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="mtg-calcs.js"></script>
+    <script src="mtg-widget.js"></script>
 </head>
 
 <body>
@@ -45,11 +47,14 @@
                     <label for="closing_date">Closing Date</label>
                     <div class="input-group date" data-provide="datepicker">
                         <input type="text" class="form-control" id="closing_date" value="01/01/2016">
-                        <span class="input-group-addon">
-                            <i class="glyphicon glyphicon-th"></i>
-                        </span>
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
                     </div>
                 </div>
+                <h3>
+                    Monthly Payment
+                </h3>
+                <p id="monthly_payment">                    
+                </p>
             </div>
             <div class="col-md-6">
                 <h3>
