@@ -10,13 +10,13 @@ function updatePayment() {
     }
 
     amSched = finance.amortizationSchedule(interestRate, nPeriods, loanAmount, baseMoment, extraPayments);
-    var s = '';
+    var s = '<tr><td>0</td><td>' + baseMoment.format('DD-MMM-YYYY') + '</td><td colspan=6></td><td>$' + loanAmount.toFixed(2) + '</td></tr>';
     $('#monthly-payment').html('$' + payment.toFixed(2));
     for (i = 0; i < nPeriods; i++) {
         s = s + '<tr><td>' +
                 amSched[i].period + '</td><td>' +
                 amSched[i].paymentDate.format('DD-MMM-YYYY') + '</td><td>' +
-                (amSched[i].interestRate * 100).toFixed(3) + '</td><td>' +
+                (amSched[i].interestRate * 100).toFixed(3) + '%</td><td>' +
                 '$' + amSched[i].interest.toFixed(2) + '</td><td>' +
                 '$' + amSched[i].principal.toFixed(2) + '</td><td>' +
                 '$' + amSched[i].requiredPayment.toFixed(2) + '</td><td>' +
