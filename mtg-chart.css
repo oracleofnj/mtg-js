@@ -1,0 +1,33 @@
+.bar {
+  fill: steelblue;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.editor, .svg {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.editor {
+  padding-left: 12px;
+}
+
+.svg {
+  border-left: 1px solid #dedede;
+  padding-left: 12px;
+  margin-left: 12px;
+}
