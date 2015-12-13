@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
     <script src="mtg-calcs.js"></script>
     <script src="mtg-widget.js"></script>
 </head>
@@ -18,7 +20,7 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <h3>
                     Mortgage Options
                 </h3>
@@ -59,29 +61,31 @@
                 <p id="monthly-payment">
                 </p>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <h3>
                     Amortization Schedule
                 </h3>
-                <div class="table-responsive">
-                    <table class="table table-condensed table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Period</th>
-                                <th>Date</th>
-                                <th>Rate</th>
-                                <th>Interest</th>
-                                <th>Principal</th>
-                                <th>Required Payment</th>
-                                <th>Extra Principal</th>
-                                <th>Total Payment</th>
-                                <th>Ending Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody id="amortization-schedule">
-                        </tbody>
-                    </table>
-                </div>
+                <small>
+                  <div class="table-responsive">
+                      <table class="table table-condensed table-bordered table-striped">
+                          <thead>
+                              <tr>
+                                  <th>Period</th>
+                                  <th>Date</th>
+                                  <th>Rate</th>
+                                  <th>Interest</th>
+                                  <th>Principal</th>
+                                  <th>Required Payment</th>
+                                  <th>Extra Principal</th>
+                                  <th>Total Payment</th>
+                                  <th>Ending Balance</th>
+                              </tr>
+                          </thead>
+                          <tbody id="amortization-schedule">
+                          </tbody>
+                      </table>
+                  </div>
+              </small>
             </div>
         </div>
     </div> <!-- /container -->
