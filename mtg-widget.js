@@ -35,12 +35,14 @@ function updatePayment() {
     $('#amortization-schedule').html(tableBody(amSched, nPeriods, extraPayments, baseMoment, loanAmount, formatter));
     $('.extra-payment').change(updatePayment);
     pAndIChart.draw(amSched);
+    balance.draw(amSched);
 }
 
-var pAndIChart;
+var pAndIChart, balance;
 
 $(document).ready(function() {
     pAndIChart = mtgChart('p-and-i-chart');
+    balance = balanceChart('balance-chart');
     $('#loan-option-form').find('input').change(updatePayment);
     updatePayment();
 });
