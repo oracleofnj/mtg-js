@@ -33,13 +33,13 @@ function updatePayment() {
     amSched = finance.amortizationSchedule(interestRate, nPeriods, loanAmount, baseMoment, extraPayments);
     $('#amortization-schedule').html(tableBody(amSched, nPeriods, extraPayments, baseMoment, loanAmount));
     $('.extra-payment').change(updatePayment);
-    principalChart.draw(amSched);
+    pAndIChart.draw(amSched);
 }
 
-var principalChart;
+var pAndIChart;
 
 $(document).ready(function() {
-    principalChart = mtgChart();
+    pAndIChart = mtgChart('p-and-i-chart');
     $('#loan-option-form').find('input').change(updatePayment);
     updatePayment();
 });
