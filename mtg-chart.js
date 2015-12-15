@@ -1,7 +1,7 @@
 function mtgChart(chartID) {
-    var margin = {top: 20, right: 30, bottom: 50, left: 40},
-        width = 60 * Math.floor((800 - margin.left - margin.right)/60);
-        height = 400 - margin.top - margin.bottom;
+    var margin = {top: 20, right: 36, bottom: 20, left: 36},
+        width = 720;
+        height = 400;
 
     var x = d3.time.scale()
         .range([0, width]);
@@ -12,7 +12,6 @@ function mtgChart(chartID) {
     var xAxis = d3.svg.axis()
         .scale(x)
         .orient('bottom')
-        .ticks(width/12)
         .tickFormat(d3.time.format('%b-%y'));
 
     var yAxis = d3.svg.axis()
@@ -20,8 +19,8 @@ function mtgChart(chartID) {
         .orient('left');
 
     var chart = d3.select('#' + chartID)
-        .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
+//        .attr('width', width + margin.left + margin.right)
+//        .attr('height', height + margin.top + margin.bottom)
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -51,14 +50,14 @@ function mtgChart(chartID) {
 
         var paymentMonths = chart.selectAll('.paymentMonth').data(amSched);
 
-        paymentMonths.exit().remove();
-
         paymentMonths
             .enter().append('g')
             .attr('class', 'paymentMonth');
 
         paymentMonths
             .attr('transform', function(d) {return 'translate(' + x(d.paymentDate.toDate()) + ',0)';});
+
+        paymentMonths.exit().remove();
 
         var bars = paymentMonths.selectAll('.bar')
             .data(function(d) {

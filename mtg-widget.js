@@ -1,19 +1,19 @@
-function tableBody(amSched, nPeriods, extraPayments, baseMoment, loanAmount) {
-    var s = '<tr><td>0</td><td>' + baseMoment.format('DD-MMM-YYYY') + '</td><td colspan=5></td><td>$' + loanAmount.toFixed(2) + '</td></tr>';
+function tableBody(amSched, nPeriods, extraPayments, baseMoment, loanAmount, formatter) {
+    var s = '<tr><td>0</td><td>' + baseMoment.format('DD-MMM-YYYY') + '</td><td colspan=5></td><td>' + formatter(loanAmount) + '</td></tr>';
     for (i = 0; i < nPeriods; i++) {
         s = s + '<tr>' +
                 '<td>' + amSched[i].period + '</td>' +
                 '<td>' + amSched[i].paymentDate.format('DD-MMM-YYYY') + '</td>' +
                 '<td>' + (amSched[i].interestRate * 100).toFixed(3) + '%</td>' +
-                '<td>$' + amSched[i].interest.toFixed(2) + '</td>' +
-                '<td>$' + amSched[i].principal.toFixed(2) + '</td>' +
+                '<td>' + formatter(amSched[i].interest) + '</td>' +
+                '<td>' + formatter(amSched[i].principal) + '</td>' +
                 '<td style="background:#f0ffff">$' +
                 '<input type=number class="extra-payment" value="' +
                 extraPayments[i].toFixed(2) +
                 '" step="100" id="extra-payment-' + (i+1).toString() + '" style="width:90%;background:transparent;border:none"/>' +
                 '</td>' +
-                '<td>$' + amSched[i].totalPayment.toFixed(2) + '</td>' +
-                '<td>$' + amSched[i].endingBalance.toFixed(2) + '</td></tr>';
+                '<td>' + formatter(amSched[i].totalPayment) + '</td>' +
+                '<td>' + formatter(amSched[i].endingBalance) + '</td></tr>';
     }
     return s;
 }
@@ -28,10 +28,11 @@ function updatePayment() {
     for (var i=0; i < nPeriods; i++) {
         extraPayments[i] = parseFloat($('#extra-payment-' + (i+1).toString()).val()) || 0;
     }
+    var formatter = d3.format('$,.02f');
 
-    $('#monthly-payment').html('$' + payment.toFixed(2));
+    $('#monthly-payment').html(formatter(payment));
     amSched = finance.amortizationSchedule(interestRate, nPeriods, loanAmount, baseMoment, extraPayments);
-    $('#amortization-schedule').html(tableBody(amSched, nPeriods, extraPayments, baseMoment, loanAmount));
+    $('#amortization-schedule').html(tableBody(amSched, nPeriods, extraPayments, baseMoment, loanAmount, formatter));
     $('.extra-payment').change(updatePayment);
     pAndIChart.draw(amSched);
 }

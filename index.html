@@ -20,8 +20,6 @@
 
 <body>
     <div class="container-fluid">
-        <svg class="chart" id="p-and-i-chart"></svg>
-
         <div class="row">
             <div class="col-md-6">
                 <h3>
@@ -39,7 +37,7 @@
                     <div class="form-row">
                         <label for="loan-term">Loan Term</label>
                         <div class="input-group">
-                            <input type="number" value="2" min="0" class="form-control" id="loan-term" />
+                            <input type="number" value="30" min="0" class="form-control" id="loan-term" />
                             <span class="input-group-addon">yrs</span>
                         </div>
                     </div>
@@ -63,6 +61,10 @@
                 </h3>
                 <p id="monthly-payment">
                 </p>
+                <h3>
+                    Principal And Interest
+                </h3>
+                <svg class="chart" id="p-and-i-chart" width="100%" height="400px" viewBox="0 0 792 460" preserveAspectRatio="xMidYMid meet"></svg>
             </div>
             <div class="col-md-4" id="charts-column">
             </div>
