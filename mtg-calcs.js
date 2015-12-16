@@ -1,7 +1,11 @@
 var finance = (function(){
     pmt = function(rate, nper, pv) {
-        var finalFV = Math.pow(1.0 + rate, nper);
-        return (rate * pv * finalFV) / (finalFV - 1.0);
+        if (Math.abs(rate) <= 1e-6) {
+            return pv / nper;
+        } else {
+            var finalFV = Math.pow(1.0 + rate, nper);
+            return (rate * pv * finalFV) / (finalFV - 1.0);
+        }
     }
 
     nextPeriod = function(prevPeriod, extraPrincipal) {
