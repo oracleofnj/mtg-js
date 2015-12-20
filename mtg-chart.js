@@ -1,167 +1,165 @@
-function mtgChart(chartID) {
-    var margin = {top: 10, right: 36, bottom: 50, left: 72},
-        width, height,
-        x = d3.time.scale(),
-        y = d3.scale.linear();
+var mtgCharts = (function() {
+    function genericChart(chartID, config) {
+        var my = {};
 
-    function setSizeAndScales() {
-        width = parseInt(d3.select('#'+chartID).style('width'), 10) - margin.left - margin.right;
-        height = parseInt(d3.select('#'+chartID).style('height'), 10) - margin.top - margin.bottom;
+        my.margin = {
+            top: (config.margin && config.margin.top) || 10,
+            right: (config.margin && config.margin.right) || 36,
+            bottom: (config.margin && config.margin.bottom) || 50,
+            left: (config.margin && config.margin.left) || 72
+        };
 
-        x.range([0, width]);
-        y.range([height, 0]);
+        my.gridlines = {
+            x: false,
+            y: (config.gridlines && (config.gridlines.y === true)) || false
+        }
+
+        my.customFns = {
+            resize: (config.customFns && config.customFns.resize) || function(){},
+            draw: (config.customFns && config.customFns.draw) || function(){},
+            yDomain: (config.customFns && config.customFns.yDomain) || function() {return 0;}
+        };
+
+        my.x = d3.time.scale();
+        my.y = d3.scale.linear();
+
+        my.chart = d3.select('#'+chartID);
+
+        my.setSizeAndScales = function () {
+            my.width = parseInt(my.chart.style('width'), 10) - my.margin.left - my.margin.right;
+            my.height = parseInt(my.chart.style('height'), 10) - my.margin.top - my.margin.bottom;
+
+            my.x.range([0, my.width]);
+            my.y.range([my.height, 0]);
+        }
+        my.setSizeAndScales();
+
+        my.xAxis = d3.svg.axis()
+            .scale(my.x)
+            .orient('bottom')
+            .tickFormat(d3.time.format('%b-%y'));
+
+        my.yAxis = d3.svg.axis()
+            .scale(my.y)
+            .orient('left');
+
+        my.yGrid = d3.svg.axis()
+            .scale(my.y)
+            .orient('left')
+            .tickFormat("");
+
+        my.innerChart = my.chart
+            .append('g')
+            .attr('transform', 'translate(' + my.margin.left + ',' + my.margin.top + ')');
+
+        my.gXAxis = my.innerChart.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,' + my.height + ')');
+
+        my.gYAxis = my.innerChart.append('g')
+            .attr('class', 'y axis');
+
+        if (my.gridlines.y) {
+            my.gYTicks = my.innerChart.append('g')
+                .attr('class', 'grid');
+        }
+
+        my.resize = function () {
+            my.setSizeAndScales();
+            my.gXAxis
+                .call(my.xAxis)
+                .selectAll('text')
+                .style('text-anchor', 'end')
+                .attr('dx', '-1em')
+                .attr('dy', '-0.6em')
+                .attr('transform', function(d) {return 'rotate(-90)'});
+
+            my.gYAxis.call(my.yAxis);
+            my.yGrid.tickSize(-my.width, 0, 0);
+            if (my.gridlines.y) {
+                my.gYTicks.call(my.yGrid);
+            }
+            my.customFns.resize(my);
+        }
+
+        my.draw = function(amSched) {
+            my.x.domain(d3.extent(amSched.map(function(d) { return d.paymentDate.toDate(); })));
+            my.y.domain([0, d3.max(amSched, my.customFns.yDomain)]);
+
+            my.customFns.draw(my, amSched);
+            my.resize();
+        }
+        d3.select(window).on('resize.' + chartID, my.resize);
+        return {draw: my.draw};
     }
 
-    setSizeAndScales();
+    function pAndIChart(chartID) {
+        var my = genericChart(chartID, {
+            customFns: {
+                draw: function(obj, data) {
+                    var paymentMonths = obj.innerChart.selectAll('.paymentMonth').data(data);
 
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient('bottom')
-        .tickFormat(d3.time.format('%b-%y'));
+                    paymentMonths
+                        .enter().append('g')
+                        .attr('class', 'paymentMonth');
 
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient('left');
+                    paymentMonths.exit().remove();
 
-    var chart = d3.select('#' + chartID)
-        .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+                    var bars = paymentMonths.selectAll('.bar')
+                        .data(function(d) {
+                            return [{color: 'IndianRed', yLow: 0, yHigh: d.principal},
+                                    {color: 'SteelBlue', yLow: d.principal, yHigh: d.interest + d.principal}];
+                        });
 
-    var gXAxis = chart.append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + height + ')');
+                    bars.enter().append('rect')
+                        .attr('class', 'bar')
+                    bars.exit().remove();
+                },
+                resize: function(obj) {
+                    var paymentMonths = obj.innerChart.selectAll('.paymentMonth');
 
-    var gYAxis = chart.append('g')
-        .attr('class', 'y axis');
+                    paymentMonths
+                        .attr('transform', function(d) {return 'translate(' + obj.x(d.paymentDate.toDate()) + ',0)';});
 
-    var resize = function() {
-        setSizeAndScales();
-        gXAxis
-            .call(xAxis)
-            .selectAll('text')
-            .style('text-anchor', 'end')
-            .attr('dx', '-1em')
-            .attr('dy', '-0.6em')
-            .attr('transform', function(d) {return 'rotate(-90)'});
-
-        gYAxis.call(yAxis);
-        chart.selectAll('.paymentMonth')
-            .attr('transform', function(d) {return 'translate(' + x(d.paymentDate.toDate()) + ',0)';});
-
-        chart.selectAll('.bar')
-            .attr('y', function(d) { return y(d.yHigh); })
-            .attr('height', function(d) { return y(d.yLow) - y(d.yHigh); })
-            .attr('width', width/amSched.length)
-            .style('fill', function(d) {return d.color;});
+                    obj.innerChart.selectAll('.bar')
+                        .attr('y', function(d) { return obj.y(d.yHigh); })
+                        .attr('height', function(d) { return obj.y(d.yLow) - obj.y(d.yHigh); })
+                        .attr('width', obj.width/paymentMonths.size())
+                        .style('fill', function(d) {return d.color;});
+                },
+                yDomain: function(d) {
+                    return d.interest + d.principal;
+                }
+            }
+        });
+        return my;
     };
 
-    var draw = function(amSched) {
-        x.domain(d3.extent(amSched.map(function(d) { return d.paymentDate.toDate(); })));
-        y.domain([0, d3.max(amSched, function(d) { return d.interest + d.principal; })]);
-
-        var paymentMonths = chart.selectAll('.paymentMonth').data(amSched);
-
-        paymentMonths
-            .enter().append('g')
-            .attr('class', 'paymentMonth');
-
-        paymentMonths.exit().remove();
-
-        var bars = paymentMonths.selectAll('.bar')
-            .data(function(d) {
-                return [{color: 'IndianRed', yLow: 0, yHigh: d.principal},
-                        {color: 'SteelBlue', yLow: d.principal, yHigh: d.interest + d.principal}];
-            });
-
-        bars.enter().append('rect')
-            .attr('class', 'bar')
-        bars.exit().remove();
-
-        resize();
-    }
-    d3.select(window).on('resize.' + chartID, resize);
-    return {draw: draw};
-}
-
-function balanceChart(chartID) {
-    var margin = {top: 10, right: 36, bottom: 50, left: 72},
-        width, height,
-        x = d3.time.scale(),
-        y = d3.scale.linear();
-
-    function setSizeAndScales() {
-        width = parseInt(d3.select('#'+chartID).style('width'), 10) - margin.left - margin.right;
-        height = parseInt(d3.select('#'+chartID).style('height'), 10) - margin.top - margin.bottom;
-
-        x.range([0, width]);
-        y.range([height, 0]);
-    }
-
-    setSizeAndScales();
-
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient('bottom')
-        .tickFormat(d3.time.format('%b-%y'));
-
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient('left');
-
-    var yGrid = d3.svg.axis()
-        .scale(y)
-        .orient('left')
-        .tickFormat("");
-
-    var chart = d3.select('#' + chartID)
-        .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-    var gXAxis = chart.append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + height + ')');
-
-    var gYAxis = chart.append('g')
-        .attr('class', 'y axis');
-
-    var gYTicks = chart.append('g')
-        .attr('class', 'grid');
-
-    var line = d3.svg.line()
-        .x(function(d) {return x(d.paymentDate.toDate());})
-        .y(function(d) {return y(d.endingBalance);});
-
-    var resize = function() {
-        setSizeAndScales();
-        gXAxis
-            .call(xAxis)
-            .selectAll('text')
-            .style('text-anchor', 'end')
-            .attr('dx', '-1em')
-            .attr('dy', '-0.6em')
-            .attr('transform', function(d) {return 'rotate(-90)'});
-
-        gYAxis.call(yAxis);
-        yGrid.tickSize(-width, 0, 0);
-        gYTicks.call(yGrid);
-        chart.select('#balanceLine').attr('d', line);
+    function balanceChart(chartID) {
+        var my = genericChart(chartID, {
+            customFns: {
+                draw: function(obj, data) {
+                    obj.innerChart.select('#balanceLine').remove();
+                    obj.innerChart.append('path')
+                        .datum(data)
+                        .attr('class', 'line')
+                        .attr('id', 'balanceLine');
+                },
+                resize: function(obj) {
+                    var line = d3.svg.line()
+                        .x(function(d) {return obj.x(d.paymentDate.toDate());})
+                        .y(function(d) {return obj.y(d.endingBalance);});
+                    obj.innerChart.select('#balanceLine').attr('d', line);
+                },
+                yDomain: function(d) {
+                    return d.endingBalance;
+                }
+            }
+        });
+        return my;
     };
-
-    var draw = function(amSched) {
-        x.domain(d3.extent(amSched.map(function(d) { return d.paymentDate.toDate(); })));
-        y.domain([0, d3.max(amSched, function(d) { return d.endingBalance; })]);
-        chart.select('#balanceLine').remove();
-        chart.append('path')
-            .datum(amSched)
-            .attr('class', 'line')
-            .attr('id', 'balanceLine');
-
-        resize();
-    };
-
-    d3.select(window).on('resize.' + chartID, resize);
     return {
-        draw: draw,
-        resize: resize
+        pAndIChart : pAndIChart,
+        balanceChart : balanceChart
     };
-}
+})();
