@@ -30,7 +30,7 @@
                         <label class="small" for="loan-amount">Loan Amount</label>
                         <div class="input-group input-group-sm">
                             <span class="input-group-addon">$</span>
-                            <input inputmode="numeric" pattern="[0-9]*" type="number" value="350000" min="0" step="25000" class="form-control" id="loan-amount" />
+                            <input type="number" value="350000" min="0" step="25000" class="form-control" id="loan-amount" />
                             <span class="input-group-addon">.00</span>
                         </div>
                     </div>
