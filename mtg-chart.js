@@ -1,4 +1,9 @@
 var mtgCharts = (function() {
+    // Inspired by Rob Moore's examples here at
+    // http://www.toptal.com/d3-js/towards-reusable-d3-js-charts
+    // and http://bl.ocks.org/rcmoore38/9f2908455355c0589619
+
+
     function pAndIChart(chartID) {
         var margin = {top: 10, right: 36, bottom: 50, left: 72},
             width, height,
