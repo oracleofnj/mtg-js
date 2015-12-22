@@ -46,13 +46,14 @@ var mtgCharts = (function() {
                 .attr('transform', function(d) {return 'rotate(-90)'});
 
             gYAxis.call(yAxis);
-            chart.selectAll('.paymentMonth')
+            var paymentMonths = chart.selectAll('.paymentMonth');
+            paymentMonths
                 .attr('transform', function(d) {return 'translate(' + x(d.paymentDate.toDate()) + ',0)';});
 
             chart.selectAll('.bar')
                 .attr('y', function(d) { return y(d.yHigh); })
                 .attr('height', function(d) { return y(d.yLow) - y(d.yHigh); })
-                .attr('width', width/amSched.length)
+                .attr('width', width/paymentMonths.size())
                 .style('fill', function(d) {return d.color;});
         };
 
