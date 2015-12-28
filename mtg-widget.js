@@ -23,7 +23,7 @@ function mtgApp() {
 
     function updatePayment() {
         var nPeriods = $('#loan-term').val() * 12;
-        var interestRate = $('#interest-rate').val() / 100.0;
+        var interestRate = $('#fixed-rate').val() / 100.0;
         var loanAmount = parseFloat($('#loan-amount').val());
         var payment = finance.pmt(interestRate / 12, nPeriods, loanAmount);
         var baseMoment = moment($('#closing-date').val(), 'DD-MMM-YYYY');
@@ -50,6 +50,15 @@ function mtgApp() {
 
 $(document).ready(function() {
     var theApp = mtgApp();
+    $('#loan-option-form input:radio[name=loan-type]').change(function() {
+        if (this.value === 'fixed') {
+            $('#fixed-rate-options').removeClass('hidden');
+            $('#arm-options').addClass('hidden');
+        } else {
+            $('#fixed-rate-options').addClass('hidden');
+            $('#arm-options').removeClass('hidden');
+        }
+    });
     $('#loan-option-form').find('input').change(theApp.updatePayment);
     theApp.updatePayment();
 });
