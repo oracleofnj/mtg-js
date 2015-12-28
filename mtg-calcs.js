@@ -41,7 +41,7 @@ var finance = (function(){
             interestRate: annualRate
         };
         return extraPayments.map(function(extraPrincipal) {
-            return (startPeriod = nextPeriod(startPeriod, extraPrincipal))
+            return (startPeriod = nextPeriod(startPeriod, extraPrincipal));
         });
     }
 
