@@ -23,18 +23,30 @@ function mtgApp() {
 
     function updatePayment() {
         var nPeriods = $('#loan-term').val() * 12;
-        var interestRate = $('#fixed-rate').val() / 100.0;
-        var loanAmount = parseFloat($('#loan-amount').val());
-        var payment = finance.pmt(interestRate / 12, nPeriods, loanAmount);
-        var baseMoment = moment($('#closing-date').val(), 'DD-MMM-YYYY');
         var extraPayments = [];
         for (var i=0; i < nPeriods; i++) {
             extraPayments[i] = parseFloat($('#extra-payment-' + (i+1).toString()).val()) || 0;
         }
+        var loanAmount = parseFloat($('#loan-amount').val());
+        var baseMoment = moment($('#closing-date').val(), 'DD-MMM-YYYY');
         var formatter = d3.format('$,.02f');
 
-        $('#monthly-payment').html(formatter(payment));
-        amSched = finance.amortizationSchedule(interestRate, nPeriods, loanAmount, baseMoment, extraPayments);
+        if ($('#loan-option-form input:radio[name=loan-type]:checked').val() === 'fixed') {
+            var interestRate = $('#fixed-rate').val() / 100.0;
+            var payment = finance.pmt(interestRate / 12, nPeriods, loanAmount);
+            $('#monthly-payment').html(formatter(payment));
+            amSched = finance.amortizationSchedule(interestRate, 0, nPeriods, false, loanAmount, baseMoment, extraPayments);
+        } else {
+            var initialRate = $('#arm-initial-rate').val() / 100.0;
+            var isInterestOnly = ($('#loan-option-form input:radio[name=arm-amortization-type]:checked').val() === 'IO');
+            var initialPayment = isInterestOnly ? loanAmount * interestRate / 12.0 : finance.pmt(interestRate / 12, nPeriods, loanAmount);
+            var initialPeriods = $('#arm-initial-term').val() * 12;
+            var fullyIndexedRate = $('#arm-fully-indexed-rate').val() / 100.0;
+            var fullyIndexedPayment = isInterestOnly ? finance.pmt(interestRate / 12, nPeriods - 0, loanAmount) : 0;
+            $('#monthly-payment').html('Initial Payment: ' + formatter(initialPayment) + '<br>Fully Indexed Payment: '+ formatter(fullyIndexedPayment));
+            amSched = finance.adjustableSchedule(initialRate, fullyIndexedRate, initialPeriods, nPeriods - initialPeriods, isInterestOnly, loanAmount, baseMoment, extraPayments);
+        }
+
         $('#amortization-schedule').html(tableBody(amSched, nPeriods, extraPayments, baseMoment, loanAmount, formatter));
         $('.extra-payment').change(updatePayment);
         pAndIChart.draw(amSched);

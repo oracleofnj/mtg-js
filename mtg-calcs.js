@@ -1,5 +1,5 @@
 var finance = (function(){
-    pmt = function(rate, nper, pv) {
+    var pmt = function(rate, nper, pv) {
         if (Math.abs(rate) <= 1e-6) {
             return pv / nper;
         } else {
@@ -8,7 +8,7 @@ var finance = (function(){
         }
     }
 
-    nextPeriod = function(prevPeriod, extraPrincipal) {
+    var nextPeriod = function(prevPeriod, extraPrincipal) {
         var period, interest, principal;
         period = prevPeriod.period + 1;
         if (prevPeriod.endingBalance > 0.005) {
@@ -32,11 +32,11 @@ var finance = (function(){
         };
     }
 
-    amortizationSchedule = function(annualRate, nper, pv, firstMoment, extraPayments) {
+    var amortizationSchedule = function(annualRate, firstPeriod, nper, isInterestOnly, pv, firstMoment, extraPayments) {
         startPeriod = {
             baseDate: firstMoment,
-            monthlyPayment: pmt(annualRate/12.0, nper, pv),
-            period: 0,
+            monthlyPayment: isInterestOnly ? pv * annualRate / 12.0 : pmt(annualRate/12.0, nper, pv),
+            period: firstPeriod,
             endingBalance: pv,
             interestRate: annualRate
         };
@@ -45,8 +45,33 @@ var finance = (function(){
         });
     }
 
+    var adjustableSchedule = function(initialRate, fullyIndexedRate, initialPeriods, fullyIndexedPeriods, isInterestOnly, pv, firstMoment, extraPayments) {
+        schedule = amortizationSchedule(
+            initialRate,
+            0,
+            initialPeriods + fullyIndexedPeriods,
+            isInterestOnly,
+            pv,
+            firstMoment,
+            extraPayments.slice(0, initialPeriods)
+        );
+        for (var i=0; i < fullyIndexedPeriods / 12.0; i++) {
+            schedule = schedule.concat(amortizationSchedule(
+                fullyIndexedRate,
+                i * 12 + initialPeriods,
+                fullyIndexedPeriods - i * 12,
+                false,
+                schedule[schedule.length - 1].endingBalance,
+                firstMoment,
+                extraPayments.slice(initialPeriods + i*12, initialPeriods + i*12 + 12)
+            ));
+        }
+        return schedule;
+    }
+
     return {
         pmt : pmt,
-        amortizationSchedule : amortizationSchedule
+        amortizationSchedule : amortizationSchedule,
+        adjustableSchedule : adjustableSchedule
     };
 })();
