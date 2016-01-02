@@ -60,24 +60,24 @@
                     </div>
                     <div class="hidden" id="arm-options">
                         <div class="form-group">
-                            <label class="small" for="arm-initial-rate">Initial Rate</label>
-                            <div class="input-group input-group-sm">
-                                <input type="number" value="2.5" min="0" step="0.125" class="form-control" id="arm-initial-rate" />
-                                <span class="input-group-addon">%</span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="small" for="arm-initial-term">Initial Rate Term</label>
+                            <label class="small" for="arm-initial-term">Fixed Term</label>
                             <div class="input-group input-group-sm">
                                 <input type="number" value="5" min="0" class="form-control" id="arm-initial-term" />
                                 <span class="input-group-addon">yrs</span>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="small" for="arm-amortization-type">Amortization Type (for Initial Rate Period)</label>
+                            <label class="small" for="arm-amortization-type">Amortization Type (for Fixed Rate Period)</label>
                             <div class="input-group input-group-sm">
-                                <label class="radio-inline"><input checked="checked" type="radio" name="arm-amortization-type" value="Amortizing">Fully Amortizing</label>
-                                <label class="radio-inline"><input type="radio" name="arm-amortization-type" value="IO">Interest Only</label>
+                                <label class="small radio-inline"><input checked="checked" type="radio" name="arm-amortization-type" value="Amortizing">Fully Amortizing</label>
+                                <label class="small radio-inline"><input type="radio" name="arm-amortization-type" value="IO">Interest Only</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="small" for="arm-initial-rate">Initial Rate</label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" value="2.5" min="0" step="0.125" class="form-control" id="arm-initial-rate" />
+                                <span class="input-group-addon">%</span>
                             </div>
                         </div>
                         <div class="form-group">

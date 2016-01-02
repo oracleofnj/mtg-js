@@ -39,10 +39,14 @@ function mtgApp() {
         } else {
             var initialRate = $('#arm-initial-rate').val() / 100.0;
             var isInterestOnly = ($('#loan-option-form input:radio[name=arm-amortization-type]:checked').val() === 'IO');
-            var initialPayment = isInterestOnly ? loanAmount * interestRate / 12.0 : finance.pmt(interestRate / 12, nPeriods, loanAmount);
+            var initialPayment = isInterestOnly ? loanAmount * initialRate / 12.0 : finance.pmt(initialRate / 12, nPeriods, loanAmount);
             var initialPeriods = $('#arm-initial-term').val() * 12;
             var fullyIndexedRate = $('#arm-fully-indexed-rate').val() / 100.0;
-            var fullyIndexedPayment = isInterestOnly ? finance.pmt(interestRate / 12, nPeriods - 0, loanAmount) : 0;
+            var fullyIndexedPayment = finance.pmt(
+                fullyIndexedRate / 12.0,
+                nPeriods - initialPeriods,
+                isInterestOnly ? loanAmount : finance.futureBalance(initialRate / 12.0, nPeriods, loanAmount, initialPeriods)
+            );
             $('#monthly-payment').html('Initial Payment: ' + formatter(initialPayment) + '<br>Fully Indexed Payment: '+ formatter(fullyIndexedPayment));
             amSched = finance.adjustableSchedule(initialRate, fullyIndexedRate, initialPeriods, nPeriods - initialPeriods, isInterestOnly, loanAmount, baseMoment, extraPayments);
         }
@@ -71,6 +75,7 @@ $(document).ready(function() {
             $('#arm-options').removeClass('hidden');
         }
     });
+    $.fn.datepicker.defaults.autoclose = true;
     $('#loan-option-form').find('input').change(theApp.updatePayment);
     theApp.updatePayment();
 });

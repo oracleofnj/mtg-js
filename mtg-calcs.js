@@ -8,6 +8,16 @@ var finance = (function(){
         }
     }
 
+    var futureBalance = function(rate, nper, pv, period) {
+        if (Math.abs(rate) <= 1e-6) {
+            return pv * period / nper;
+        } else {
+            var finalFV = Math.pow(1.0 + rate, nper);
+            var interimFV = Math.pow(1.0 + rate, period);
+            return pv * (interimFV - (interimFV - 1) * finalFV / (finalFV - 1.0));
+        }
+    }
+
     var nextPeriod = function(prevPeriod, extraPrincipal) {
         var period, interest, principal;
         period = prevPeriod.period + 1;
@@ -71,6 +81,7 @@ var finance = (function(){
 
     return {
         pmt : pmt,
+        futureBalance : futureBalance,
         amortizationSchedule : amortizationSchedule,
         adjustableSchedule : adjustableSchedule
     };
