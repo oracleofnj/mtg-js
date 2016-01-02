@@ -45,11 +45,11 @@
                     <div class="form-group">
                         <label class="small" for="loan-type">Loan Type</label>
                         <div class="input-group input-group-sm">
-                            <label class="small radio-inline"><input checked="checked" type="radio" name="loan-type" value="fixed">Fixed Rate</label>
-                            <label class="small radio-inline"><input type="radio" name="loan-type" value="ARM">Adjustable Rate</label>
+                            <label class="small radio-inline"><input checked="checked" type="radio" name="loan-type" value="ARM">Adjustable Rate</label>
+                            <label class="small radio-inline"><input type="radio" name="loan-type" value="fixed">Fixed Rate</label>
                         </div>
                     </div>
-                    <div id="fixed-rate-options">
+                    <div class="hidden" id="fixed-rate-options">
                         <div class="form-group">
                             <label class="small" for="fixed-rate">Interest Rate</label>
                             <div class="input-group input-group-sm">
@@ -58,7 +58,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="hidden" id="arm-options">
+                    <div id="arm-options">
                         <div class="form-group">
                             <label class="small" for="arm-initial-term">Fixed Term</label>
                             <div class="input-group input-group-sm">
